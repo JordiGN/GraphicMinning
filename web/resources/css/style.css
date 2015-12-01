@@ -1,0 +1,138 @@
+body{
+  font-family: 'Open Sans', sans-serif;  
+}   
+section{
+    min-height: 100vh;
+    background-color: #ccffcc;
+}
+#lof{
+  text-align: center;
+}
+.Modulos{
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+a:hover{
+  background: transparent;
+}
+.loginout{
+  left: 1500px;
+}
+
+.imInicial{
+ height:150px;
+ width:150px;
+
+}
+#r1{
+  height: 200px;
+
+  background:url('img/graficas5.jpg')no-repeat fixed center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-position: bottom;
+  z-index: 0;
+  
+}
+.r1{
+  position: absolute;  
+  
+  height: auto;
+  z-index: 1;
+  color: white;
+  font-weight: bold;
+  font-size: 3em;
+}
+label{
+    text-align: center;
+}
+div{
+    margin-top: 10px;    
+}
+
+form {
+  padding: 20px 0;
+  position: relative;
+  z-index: 2;
+}
+form button {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  outline: 0;
+  background-color: #F2E7E4;
+  border: 0;
+  padding: 10px 15px;
+  color: #152A38;
+  border-radius: 3px;
+  width: 250px;
+  cursor: pointer;
+  font-size: 18px;
+  -webkit-transition-duration: 0.25s;
+          transition-duration: 0.25s;
+}
+form button:hover {
+  /*background-color: #f5f7f9;*/
+  background-color: #152A38;
+  color: #F2E7E4;
+}
+.pform{   
+  border:1px solid #339999;
+  border-radius: 10px;
+  background-color: #339999;
+  margin-bottom: 10px;
+  
+}
+.pform2{
+  margin-left: 20px;   
+  border:1px solid #339999;
+  border-radius: 10px;
+  background-color: #339999;
+  margin-bottom: 10px;
+    
+}
+
+hr {
+   border-bottom: 2px dashed #ACD254;
+   border-left:none;
+   border-right:none;
+   height: 6px;
+   width: 75%;
+ }
+
+ .tituloTabla{
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+ }
+.imagenEco{
+  margin-right: 5px;
+}
+table .ecotec{
+  border-collapse: separate;
+  border-spacing:  15px;
+}
+#imgEco{
+  width: 120px;
+  height: 120px;
+}
+
+/* reportes*/
+/* Effect 7: second border slides up */
+
+.tabla{
+  border-collapse: separate;
+  border-spacing:  5px;
+  text-align: center;
+  width: 100%;
+}
+
+.tabla tr td{
+  background: #ACD254;
+}
+
+
+
