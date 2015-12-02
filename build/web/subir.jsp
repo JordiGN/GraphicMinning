@@ -48,10 +48,10 @@
         BufferedReader br = new BufferedReader(fr);
         //Pattern p = Pattern.compile("(INSERT INTO*)(\\d+)");
 	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
-        String columnas = " \\W{1}(\\W{1}\\w+\\W+)+";
+        String columnas = "(\\W{1}\\w+\\W+)+";
         String datos="(\\W?\\w+\\W{0,3})+";
         //String datos="(\\W?\\w+[^,])+";
-        Pattern r = Pattern.compile("(INSERT INTO ("+tabla+")("+columnas+") VALUES("+datos+"))");/*VALUES ("+datos+")*/
+        Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} VALUES("+datos+"))");/*VALUES ("+datos+")*/
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
          
@@ -65,16 +65,16 @@
         Matcher m = r.matcher(aux);
         while (m.find()) {
             
-            //out.print("Cabeceras"+  m.group(3));            
-            datosfile.add(m.group(3));            
-            //out.print("<br>");            
-            //out.print("Columnas "+ m.group(5));
-            datosfile.add(m.group(5));
-            //out.print("<br>");
-            //aux2+=m.group(0); */           
-        }        
+            out.print("Cabeceras"+  m.group(3));            
+            //datosfile.add(m.group(3));            
+            out.print("<br>");            
+            out.print("Columnas "+ m.group(5));
+            //datosfile.add(m.group(5));
+            out.print("<br>");
+            aux2+=m.group(0);           
+        }  
         
-        String[] nombrearchivo = nombre.split(".sql");
+        /*String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
        
         String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
@@ -88,19 +88,28 @@
         try {
          
             CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
-             
+            while (m.find()) {
+            
+            //out.print("Cabeceras"+  m.group(3));            
+            csvOutput.write(m.group(3)); 
+            csvOutput.endRecord();
+            //out.print("<br>");            
+            //out.print("Columnas "+ m.group(5));
+            csvOutput.write(m.group(5));
+            csvOutput.endRecord();
+            //out.print("<br>");
+            //aux2+=m.group(0);           
+        }      
             csvOutput.write("Codigo");
             csvOutput.write("Nombres");
             csvOutput.write("Apellidos");
             csvOutput.write("Correo");
-            csvOutput.endRecord();
-                         
-             
+            csvOutput.endRecord();                                   
             csvOutput.close();
          
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         
         /*String[] aux2 = aux.split("INSERT");
         aux2[0]="";*/
