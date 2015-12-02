@@ -49,9 +49,10 @@
         //Pattern p = Pattern.compile("(INSERT INTO*)(\\d+)");
 	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
         String columnas = "(\\W{1}\\w+\\W+)+";
+        //String datos="(\\W?\\w+\\W{0,3})+";
         String datos="(\\W?\\w+\\W{0,3})+";
-        //String datos="(\\W?\\w+[^,])+";
-        Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} VALUES("+datos+"))");/*VALUES ("+datos+")*/
+        Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} "
+                + "VALUES\\W{1}("+datos+")[);])");
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
          
