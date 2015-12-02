@@ -1,4 +1,5 @@
 
+<%@page import="com.sun.xml.rpc.processor.modeler.j2ee.xml.string"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="javax.faces.context.FacesContext"%>
 <%@ page import="java.util.*" %>
@@ -11,7 +12,7 @@
 <%@ page import="java.io.IOException" %>
 <%@page import="java.sql.SQLException" %>
 <%@page import="java.util.regex.*"%>
-
+<%@page import="com.csvreader.CsvWriter" %>
 
 <%
         /*FileItemFactory es una interfaz para crear FileItem*/
@@ -49,6 +50,7 @@
 	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
         String columnas = " \\W{1}(\\W{1}\\w+\\W+)+";
         String datos="(\\W?\\w+\\W{0,3})+";
+        //String datos="(\\W?\\w+[^,])+";
         Pattern r = Pattern.compile("(INSERT INTO ("+tabla+")("+columnas+") VALUES("+datos+"))");/*VALUES ("+datos+")*/
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
@@ -59,17 +61,47 @@
             sb.append(s);            
         }
         String aux2="";
-        
+        List<String> datosfile = new ArrayList<String>();
         Matcher m = r.matcher(aux);
         while (m.find()) {
             
-            out.print("Cabeceras"+  m.group(3));
-            out.print("<br>");
-            out.print("Columnas "+ m.group(5));
-            out.print("<br>");
+            //out.print("Cabeceras"+  m.group(3));            
+            datosfile.add(m.group(3));            
+            //out.print("<br>");            
+            //out.print("Columnas "+ m.group(5));
+            datosfile.add(m.group(5));
+            //out.print("<br>");
             //aux2+=m.group(0); */           
         }        
-        out.print(aux2);
+        
+        String[] nombrearchivo = nombre.split(".sql");
+        out.print(nombrearchivo[0]);
+       
+        String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
+        boolean alreadyExists = new File(outputFile).exists();
+         
+        if(alreadyExists){
+            File ficheroUsuarios = new File(outputFile);
+            ficheroUsuarios.delete();
+        }        
+         
+        try {
+         
+            CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
+             
+            csvOutput.write("Codigo");
+            csvOutput.write("Nombres");
+            csvOutput.write("Apellidos");
+            csvOutput.write("Correo");
+            csvOutput.endRecord();
+                         
+             
+            csvOutput.close();
+         
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         /*String[] aux2 = aux.split("INSERT");
         aux2[0]="";*/
         br.close();
