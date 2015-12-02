@@ -65,7 +65,7 @@
         String aux2="";
         List<String> datosfile = new ArrayList<String>();
         Matcher m = r.matcher(aux);
-        while (m.find()) {
+        /*while (m.find()) {
             
             out.print("Cabeceras"+  m.group(3));            
             //datosfile.add(m.group(3));            
@@ -82,9 +82,9 @@
             //datosfile.add(m.group(5));
             out.print("<br>");
             aux2+=m.group(0);           
-        } 
+        }*/ 
         
-        /*String[] nombrearchivo = nombre.split(".sql");
+        String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
        
         String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
@@ -99,31 +99,38 @@
          
             CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
             while (m.find()) {
-            
-                out.print("Cabeceras"+  m.group(3));                            
+
+                out.print("Cabeceras"+  m.group(3));  
+                csvOutput.write(m.group(3));
+                csvOutput.endRecord(); 
+                //datosfile.add(m.group(3));            
                 out.print("<br>");            
-                //csvOutput.write(m.group(3));
                 //out.print("Columnas "+ m.group(5));
-                String[] cols = m.group(5).split("[)]");
+                String[] cols = m.group(5).split("[)(]");
                 for (int i=0;i<cols.length;i++){
-                       out.print("Columnas "+ cols[i]); 
-                       out.print("<br>"); 
-                       //csvOutput.write(cols[i]);
+                       if(i%2==0){
+                        out.print("Columnas "+ cols[i]); 
+                        csvOutput.write(cols[i]);
+                        csvOutput.endRecord(); 
+                        out.print("<br>"); 
+                       }
+                       //datosfile.add(cols[i]);
                 }
                 //datosfile.add(m.group(5));
                 out.print("<br>");
                 aux2+=m.group(0);           
-            }         
-            csvOutput.write("Codigo");
+            }
+            csvOutput.close();
+           /* csvOutput.write("Codigo");
             csvOutput.write("Nombres");
             csvOutput.write("Apellidos");
             csvOutput.write("Correo");
             csvOutput.endRecord();                                   
-            csvOutput.close();
+            csvOutput.close();*/
          
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
              
         br.close();
        
