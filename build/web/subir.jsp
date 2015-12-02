@@ -50,9 +50,10 @@
 	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
         String columnas = "(\\W{1}\\w+\\W+)+";
         //String datos="(\\W?\\w+\\W{0,3})+";
-        String datos="(\\W?\\w+\\W{0,3})+";
+        String datos="(\\W{0,2}\\w+\\W{0,2})+";        
+                
         Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} "
-                + "VALUES\\W{1}("+datos+")[);])");
+                + "VALUES\\W{1}("+datos+")([),]|[);]))");
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
          
@@ -69,7 +70,13 @@
             out.print("Cabeceras"+  m.group(3));            
             //datosfile.add(m.group(3));            
             out.print("<br>");            
-            out.print("Columnas "+ m.group(5));
+            //out.print("Columnas "+ m.group(5));
+            String[] cols = m.group(5).split("[)]");
+            for (int i=0;i<cols.length;i++){
+                   out.print("Columnas "+ cols[i]); 
+                   out.print("<br>"); 
+                   //datosfile.add(cols[i]);
+            }
             //datosfile.add(m.group(5));
             out.print("<br>");
             aux2+=m.group(0);           
@@ -90,17 +97,19 @@
          
             CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
             while (m.find()) {
-            
-            //out.print("Cabeceras"+  m.group(3));            
-            csvOutput.write(m.group(3)); 
-            csvOutput.endRecord();
-            //out.print("<br>");            
-            //out.print("Columnas "+ m.group(5));
-            csvOutput.write(m.group(5));
-            csvOutput.endRecord();
-            //out.print("<br>");
-            //aux2+=m.group(0);           
-        }      
+
+               out.print("Cabeceras"+  m.group(3));            
+               datosfile.add(m.group(3));            
+               out.print("<br>");            
+               out.print("Columnas "+ m.group(5));
+               String[] cols = m.group(5).split("[),(]");
+               for (int i=0;i<cols.length;i++){
+                      datosfile.add(cols[i]);
+               }
+               //datosfile.add(m.group(5));
+               out.print("<br>");
+               aux2+=m.group(0);           
+           }        
             csvOutput.write("Codigo");
             csvOutput.write("Nombres");
             csvOutput.write("Apellidos");
