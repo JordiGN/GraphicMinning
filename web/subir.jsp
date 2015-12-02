@@ -9,6 +9,7 @@
 <%@ page import="org.apache.commons.io.*" %>
 <%@ page import="java.io.*" %>
 <%@page import="clases.converter" %>
+<%@page import="clases.CSV2Arff" %>
 <%@ page import="java.io.IOException" %>
 <%@page import="java.sql.SQLException" %>
 <%@page import="java.util.regex.*"%>
@@ -66,8 +67,27 @@
         }                
         //Se asigna la cadena al analizador
         Matcher m = r.matcher(aux);
+        while (m.find()) {
+                out.print("Cabeceras"+  m.group(3));  
+                //csvOutput.write(m.group(3));
+                //csvOutput.endRecord(); 
+                //datosfile.add(m.group(3));            
+                out.print("<br>");            
+                //out.print("Columnas "+ m.group(5));
+                String[] cols = m.group(5).split("[),(]");
+                for (int i=0;i<cols.length;i++){
+                       if(i%2==0){
+                        out.print("Columnas "+ cols[i]); 
+                        //csvOutput.write(cols[i]);
+                        //csvOutput.endRecord(); 
+                        out.print("<br>"); 
+                       }
+                       //datosfile.add(cols[i]);
+                }
+                //datosfile.add(m.group(5));                                
+            }
         
-        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
+        /*//se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
         String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
        //Se crea la el archivo con extensión CSV en la ruta especificada
@@ -104,25 +124,14 @@
             csvOutput.close();           
         } catch (IOException e) {
             e.printStackTrace();
-        }
-             
-        br.close();
-       
-        // here is our splitter ! We use ";" as a delimiter for each request
-        // then we are sure to have well formed statements
-        String[] inst = sb.toString().split(";");
+        }          
         
-        /*for(int i = 0; i<inst.length; i++) {
-        // we ensure that there is no spaces before or after the request 
-        // string in order to not execute empty statements
-           if(!inst[i].trim().equals("")){
-              stm.executeUpdate(inst[i]+";");
-           }
-         }*/
-        converter convertir = new converter();
-        /*out.print("SB" + sb);*/
-        /*convertir.exportExcelData(sb);*/
+        String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".arff";
+        String argumento =archivoarff+","+outputFile;
+        String[] args = argumento.split(",");
         
-        
-        
+                
+                
+                CSV2Arff convertirARFF = new CSV2Arff();
+                CSV2Arff.main(args);     */                               
 %>
