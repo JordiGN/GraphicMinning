@@ -46,60 +46,43 @@
      // be sure to not have line starting with "--" or "/*" or any 
      // other non aplhabetical character
         BufferedReader br = new BufferedReader(fr);
-        //Pattern p = Pattern.compile("(INSERT INTO*)(\\d+)");
+        //Patron de coincidencias
+        //para saber que tabla es
 	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
+        //Saber las cabecersas del archivo
         String columnas = "(\\W{1}\\w+\\W+)+";
-        //String datos="(\\W?\\w+\\W{0,3})+";
-        String datos="(\\W{0,2}\\w+\\W{0,2})+";        
-                
+        //Los datos en el archivo
+        String datos="(\\W{0,2}\\w+\\W{0,2})+";                        
+        //variable para analizar las coincidencias
         Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} "
                 + "VALUES\\W{1}("+datos+")([),]|[);]))");
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
          
-         
+        //Se lee todo el documento y se concatena en una variable auxiliar
+        //desde ahi se pasara la cadena a anaizar
         while((s = br.readLine()) != null){                          
-            aux+=s;
-            sb.append(s);            
-        }
-        String aux2="";
-        List<String> datosfile = new ArrayList<String>();
+            aux+=s;            
+        }                
+        //Se asigna la cadena al analizador
         Matcher m = r.matcher(aux);
-        /*while (m.find()) {
-            
-            out.print("Cabeceras"+  m.group(3));            
-            //datosfile.add(m.group(3));            
-            out.print("<br>");            
-            //out.print("Columnas "+ m.group(5));
-            String[] cols = m.group(5).split("[)(]");
-            for (int i=0;i<cols.length;i++){
-                   if(i%2==0){
-                    out.print("Columnas "+ cols[i]); 
-                    out.print("<br>"); 
-                   }
-                   //datosfile.add(cols[i]);
-            }
-            //datosfile.add(m.group(5));
-            out.print("<br>");
-            aux2+=m.group(0);           
-        }*/ 
         
+        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
         String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
-       
+       //Se crea la el archivo con extensión CSV en la ruta especificada
         String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
-        boolean alreadyExists = new File(outputFile).exists();
-         
+        //Si esta el archivo lo sobreescribe
+        boolean alreadyExists = new File(outputFile).exists();         
         if(alreadyExists){
             File ficheroUsuarios = new File(outputFile);
             ficheroUsuarios.delete();
-        }        
-         
+        }   
+        //Metodo para escribir el archivo
         try {
-         
+            
             CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
             while (m.find()) {
-
                 out.print("Cabeceras"+  m.group(3));  
                 csvOutput.write(m.group(3));
                 csvOutput.endRecord(); 
@@ -116,18 +99,9 @@
                        }
                        //datosfile.add(cols[i]);
                 }
-                //datosfile.add(m.group(5));
-                out.print("<br>");
-                aux2+=m.group(0);           
+                //datosfile.add(m.group(5));                                
             }
-            csvOutput.close();
-           /* csvOutput.write("Codigo");
-            csvOutput.write("Nombres");
-            csvOutput.write("Apellidos");
-            csvOutput.write("Correo");
-            csvOutput.endRecord();                                   
-            csvOutput.close();*/
-         
+            csvOutput.close();           
         } catch (IOException e) {
             e.printStackTrace();
         }
