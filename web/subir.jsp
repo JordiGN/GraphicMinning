@@ -126,11 +126,12 @@
         
         
         String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/arff/"+nombrearchivo[0]+".arff";
-        //String argumento =archivoarff+","+outputFile;         
+        //String argumento =archivoarff+","+outputFile;
+         
         
         // load CSV
         CSVLoader loader = new CSVLoader();
-        loader.setSource(outputFile);
+        loader.setSource(new File(outputFile));
         Instances data = loader.getDataSet();
 
         // save ARFF
