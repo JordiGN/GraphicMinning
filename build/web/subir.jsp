@@ -14,6 +14,9 @@
 <%@page import="java.sql.SQLException" %>
 <%@page import="java.util.regex.*"%>
 <%@page import="com.csvreader.CsvWriter" %>
+<%@page  import="weka.core.Instances" %> 
+<%@page import="weka.core.converters.ArffSaver"%>
+<%@page import="weka.core.converters.CSVLoader" %>
 
 <%
         /*FileItemFactory es una interfaz para crear FileItem*/
@@ -122,10 +125,20 @@
         }          
         
         
-        String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".arff";
-        String argumento =archivoarff+","+outputFile;
-        String []arg= argumento.split("[,]");
-        clases.CSV2Arff nueva = new clases.CSV2Arff();
-        nueva.main(arg);
+        String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/arff/"+nombrearchivo[0]+".arff";
+        //String argumento =archivoarff+","+outputFile;         
+        
+        // load CSV
+        CSVLoader loader = new CSVLoader();
+        loader.setSource(outputFile);
+        Instances data = loader.getDataSet();
+
+        // save ARFF
+        ArffSaver saver = new ArffSaver();
+        saver.setInstances(data);
+        saver.setFile(new File(archivoarff));
+        saver.setDestination(new File(archivoarff));
+        saver.writeBatch();
         
 %>
+
