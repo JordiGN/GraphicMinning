@@ -67,27 +67,39 @@
         }                
         //Se asigna la cadena al analizador
         Matcher m = r.matcher(aux);
-        while (m.find()) {
-                out.print("Cabeceras"+  m.group(3));  
+        /*while (m.find()) {
+                out.print("Cabeceras"+  m.group(3)); 
+                String[] cab=m.group(3).split("[,]");
+                for (int ii=0;ii<cab.length;ii++){
+                          out.print("cabecera "+ cab[ii]);
+                          out.print("<br>");
+                  }
                 //csvOutput.write(m.group(3));
                 //csvOutput.endRecord(); 
                 //datosfile.add(m.group(3));            
                 out.print("<br>");            
                 //out.print("Columnas "+ m.group(5));
-                String[] cols = m.group(5).split("[),(]");
+                String[] cols = m.group(5).split("[)(]");
                 for (int i=0;i<cols.length;i++){
                        if(i%2==0){
-                        out.print("Columnas "+ cols[i]); 
-                        //csvOutput.write(cols[i]);
-                        //csvOutput.endRecord(); 
-                        out.print("<br>"); 
+                            //out.print("Columnas "+ cols[i]);
+                            String [] cols2= cols[i].split("[,]"); 
+                            int auxi=cols2.length;
+                            out.print("<br>");                            
+                            for (int ii=0;ii<auxi-1;ii++){
+                                out.print("Columnas "+ cols2[ii]);
+                                out.print("<br>");
+                            };
+                            //csvOutput.write(cols[i]);
+                            //csvOutput.endRecord(); 
+                            out.print("<br>");
                        }
                        //datosfile.add(cols[i]);
                 }
                 //datosfile.add(m.group(5));                                
-            }
+            }*/
         
-        /*//se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
+        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
         String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
        //Se crea la el archivo con extensión CSV en la ruta especificada
@@ -103,35 +115,50 @@
             
             CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
             while (m.find()) {
-                out.print("Cabeceras"+  m.group(3));  
-                csvOutput.write(m.group(3));
+                //out.print("Cabeceras"+  m.group(3)); 
+                String[] cab=m.group(3).split("[,]");
+                for (int ii=0;ii<cab.length;ii++){
+                          out.print("cabecera "+ cab[ii]);
+                          out.print("<br>");
+                          csvOutput.write(cab[ii]);
+                  }
+                //csvOutput.write(m.group(3));
                 csvOutput.endRecord(); 
                 //datosfile.add(m.group(3));            
                 out.print("<br>");            
                 //out.print("Columnas "+ m.group(5));
-                String[] cols = m.group(5).split("[)(]");
+                String[] cols = m.group(5).split("[()]");
+                
                 for (int i=0;i<cols.length;i++){
+                    
                        if(i%2==0){
-                        out.print("Columnas "+ cols[i]); 
-                        csvOutput.write(cols[i]);
-                        csvOutput.endRecord(); 
-                        out.print("<br>"); 
-                       }
-                       //datosfile.add(cols[i]);
-                }
-                //datosfile.add(m.group(5));                                
+                            //out.print("Columnas "+ cols[i]);
+                            //out.print("<br>");  
+                            String [] cols2= cols[i].split("[,]"); 
+                            int auxi=cols2.length;
+                            out.print("<br>");                            
+                            for (int ii=0;ii<auxi;ii++){
+                                out.print("Columnas "+ cols2[ii]);
+                                out.print("<br>");
+                                csvOutput.write(cols2[ii]);
+                            };
+                            //csvOutput.write(cols[i]);
+                            csvOutput.endRecord(); 
+                            out.print("<br>");
+                       }                       
+                }                                              
             }
             csvOutput.close();           
         } catch (IOException e) {
             e.printStackTrace();
         }          
         
-        String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".arff";
+        /*String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".arff";
         String argumento =archivoarff+","+outputFile;
         String[] args = argumento.split(",");
         
                 
                 
                 CSV2Arff convertirARFF = new CSV2Arff();
-                CSV2Arff.main(args);     */                               
+                CSV2Arff.main(args);    */                          
 %>
