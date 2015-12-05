@@ -17,6 +17,8 @@
 <%@page  import="weka.core.Instances" %> 
 <%@page import="weka.core.converters.ArffSaver"%>
 <%@page import="weka.core.converters.CSVLoader" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 
 <%
         /*FileItemFactory es una interfaz para crear FileItem*/
@@ -59,7 +61,7 @@
         String datos="(\\W{0,2}\\w+\\W{0,2})+";                        
         //variable para analizar las coincidencias
         Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} "
-                + "VALUES\\W{1}("+datos+")([),]|[);]))");
+                + "VALUES[(]("+datos+")([),]|[);]))");
         //Pattern cols= Pattern.compile(columnas); 
         //Pattern dat= Pattern.compile(datos); 
          
@@ -67,9 +69,49 @@
         //desde ahi se pasara la cadena a anaizar
         while((s = br.readLine()) != null){                          
             aux+=s;            
-        }                
+        }   
+        //out.print(aux);
+        //String aux2= aux.replaceAll("),", "0");
         //Se asigna la cadena al analizador
-        Matcher m = r.matcher(aux);             
+        Matcher m = r.matcher(aux);   
+        
+        /*while (m.find()) {
+                 out.print(m.group(0));
+                //Pequenio ciclo para poder ver los nombres de las columnas
+                /*String[] cab=m.group(3).split("[,]");
+                for (int ii=0;ii<cab.length;ii++){
+                          out.print("cabecera "+ cab[ii]);
+                          out.print("<br>");
+                          //csvOutput.write(cab[ii]);
+                  }                
+                //finaliza record para salto de linea
+                //csvOutput.endRecord();                            
+                out.print("<br>");                   
+                //las coincidencias con los datos son separadas por los parentesis, para que solo quede la
+                //información dentro de los parentesis
+                //out.print(m.group(5));
+                String[] cols = m.group(5).split("[()]"); 
+                //como aun quedan "," estas se ignoran yendo de par en par desde el 0 hasta n
+                for (int i=0;i<cols.length;i++){                    
+                       if(i%2==0){
+                            //Cada que lee una linea de coincidencia par la separa por comas para obtener
+                           //el valor individual
+                            String [] cols2= cols[i].split("[,]"); 
+                            int auxi=cols2.length;
+                            out.print("<br>");                            
+                            for (int ii=0;ii<auxi;ii++){
+                                out.print("Columnas "+ cols2[ii]);
+                                out.print("<br>");
+                                //csvOutput.write(cols2[ii]);
+                            };
+                            //una vez recorrida la linea de coincidencia y escrita se cierrra registro para
+                            //salto de linea
+                            //csvOutput.endRecord(); 
+                            out.print("<br>");
+                       }                       
+                }                                             
+            }*/       
+        
         //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
         String[] nombrearchivo = nombre.split(".sql");
         out.print(nombrearchivo[0]);
@@ -89,8 +131,8 @@
                 //Pequenio ciclo para poder ver los nombres de las columnas
                 String[] cab=m.group(3).split("[,]");
                 for (int ii=0;ii<cab.length;ii++){
-                          out.print("cabecera "+ cab[ii]);
-                          out.print("<br>");
+                          //out.print("cabecera "+ cab[ii]);
+                          //out.print("<br>");
                           csvOutput.write(cab[ii]);
                   }                
                 //finaliza record para salto de linea
@@ -108,8 +150,8 @@
                             int auxi=cols2.length;
                             out.print("<br>");                            
                             for (int ii=0;ii<auxi;ii++){
-                                out.print("Columnas "+ cols2[ii]);
-                                out.print("<br>");
+                                //out.print("Columnas "+ cols2[ii]);
+                                //out.print("<br>");
                                 csvOutput.write(cols2[ii]);
                             };
                             //una vez recorrida la linea de coincidencia y escrita se cierrra registro para
@@ -122,24 +164,43 @@
             csvOutput.close();           
         } catch (IOException e) {
             e.printStackTrace();
-        }          
+        }     
         
         
-        String archivoarff = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/arff/"+nombrearchivo[0]+".arff";
-        //String argumento =archivoarff+","+outputFile;
+        String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
+        String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";
+        String argumento =sourcepath+","+destpath;
+        out.print(argumento); 
+        
+        /*boolean arffExists = new File(destpath).exists();           
+        if(arffExists){
+            File arffFile = new File(destpath);
+            arffFile.delete();
+        }*/
+        
+        /*boolean csvExists = new File(sourcepath).exists();           
+        if(csvExists){
+            File csvFile = new File(sourcepath);
+            csvFile.delete();
+        }*/
+        
+         // load CSV
+        
+        
+         CSVLoader loader = new CSVLoader();
+         loader.setSource(new File(sourcepath));
+         Instances data = loader.getDataSet();
+
+         // save ARFF
+         ArffSaver saver = new ArffSaver();
+         saver.setInstances(data);
+         saver.setFile(new File(destpath));
+         //saver.setDestination(new File(destpath));
+         saver.writeBatch();                              
+        
+         //response.sendRedirect("http://localhost:8080/GraphicMinning/");                   
          
-        
-        // load CSV
-        CSVLoader loader = new CSVLoader();
-        loader.setSource(new File(outputFile));
-        Instances data = loader.getDataSet();
-
-        // save ARFF
-        ArffSaver saver = new ArffSaver();
-        saver.setInstances(data);
-        saver.setFile(new File(archivoarff));
-        saver.setDestination(new File(archivoarff));
-        saver.writeBatch();
-        
 %>
-
+<jsp:forward page="wekaInterface.jsp">
+    <jsp:param name="param2" value="prueba"/>
+</jsp:forward>

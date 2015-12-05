@@ -2,8 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
+        
         <h:outputStylesheet library="css" name="style.css" /> 
         <h:outputStylesheet library="css" name="bootstrap.min.css" /> 
         <h:outputScript library="js" name="lib.js" target="body" />
@@ -11,7 +13,7 @@
         <h:outputScript library="js" name="Chart.min.js" target="body" />        
         <title>Graphic Minning</title>
     </h:head>
-    <h:body>        
+    <h:body>                
                 
         <section class="content">
             <div class="container-fluid">
@@ -34,8 +36,9 @@
                             <h:form>
                                 <label class="col-lg-3" for="metodo2">Atributos</label>
                                 <div class="col-lg-9"> 
+                     
                                     <h:selectOneListbox value="" id="atributo" class="form-control">
-                                        <f:selectItem itemValue="opcion" itemLabel="Opcion"/>
+                                        <f:selectItem itemValue="opcion" itemLabel="bla"/>
                                         <f:selectItem itemValue="opcion1" itemLabel="Opcion1"/>
                                         <f:selectItem itemValue="opcion2" itemLabel="Opcion2"/>
                                         <f:selectItem itemValue="opcion3" itemLabel="Opcion3"/>                                                                      
@@ -52,7 +55,7 @@
                                 <div class="col-lg-12">                                
                                     <div class="col-lg-6">
                                         <label>Nombre</label>
-                                        <h:inputText class="form-control" value="#{atributo.Nombre}"/>
+                                        <h:inputText class="form-control" value="#{username}"/>
                                     </div>                                                               
                                     <div class="col-lg-6">
                                         <label>Tipo</label>
@@ -161,4 +164,3 @@
         
     </h:body>
 </html>
-
