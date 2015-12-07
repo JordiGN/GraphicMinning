@@ -1,4 +1,7 @@
 
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <%@page import="com.sun.xml.rpc.processor.modeler.j2ee.xml.string"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="javax.faces.context.FacesContext"%>
@@ -19,6 +22,13 @@
 <%@page import="weka.core.converters.CSVLoader" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+
+<%@ page import="weka.classifiers.trees.J48" %>
+<%@ page import="weka.experiment.InstanceQuery" %>
+<%@ page import="weka.core.converters.*" %>
+<%@ page import="weka.core.Instances" %>
+<%@ page import="java.io.*" %>
+<%@ page import="java.io.File.*" %>
 
 <%
         /*FileItemFactory es una interfaz para crear FileItem*/
@@ -69,9 +79,7 @@
         //desde ahi se pasara la cadena a anaizar
         while((s = br.readLine()) != null){                          
             aux+=s;            
-        }   
-        //out.print(aux);
-        //String aux2= aux.replaceAll("),", "0");
+        }                   
         //Se asigna la cadena al analizador
         Matcher m = r.matcher(aux);   
         
@@ -88,7 +96,7 @@
                 //csvOutput.endRecord();                            
                 out.print("<br>");                   
                 //las coincidencias con los datos son separadas por los parentesis, para que solo quede la
-                //informaci髇 dentro de los parentesis
+                //informaci贸n dentro de los parentesis
                 //out.print(m.group(5));
                 String[] cols = m.group(5).split("[()]"); 
                 //como aun quedan "," estas se ignoran yendo de par en par desde el 0 hasta n
@@ -112,10 +120,10 @@
                 }                                             
             }*/       
         
-        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensi髇
+        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensi贸n
         String[] nombrearchivo = nombre.split(".sql");
-        out.print(nombrearchivo[0]);
-       //Se crea la el archivo con extensi髇 CSV en la ruta especificada
+        //out.print(nombrearchivo[0]);
+       //Se crea la el archivo con extensi贸n CSV en la ruta especificada
         String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
         //Si esta el archivo lo sobreescribe
         boolean alreadyExists = new File(outputFile).exists();         
@@ -139,7 +147,7 @@
                 csvOutput.endRecord();                            
                 out.print("<br>");                   
                 //las coincidencias con los datos son separadas por los parentesis, para que solo quede la
-                //informaci髇 dentro de los parentesis
+                //informaci贸n dentro de los parentesis
                 String[] cols = m.group(5).split("[()]"); 
                 //como aun quedan "," estas se ignoran yendo de par en par desde el 0 hasta n
                 for (int i=0;i<cols.length;i++){                    
@@ -170,19 +178,8 @@
         String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
         String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";
         String argumento =sourcepath+","+destpath;
-        out.print(argumento); 
-        
-        /*boolean arffExists = new File(destpath).exists();           
-        if(arffExists){
-            File arffFile = new File(destpath);
-            arffFile.delete();
-        }*/
-        
-        /*boolean csvExists = new File(sourcepath).exists();           
-        if(csvExists){
-            File csvFile = new File(sourcepath);
-            csvFile.delete();
-        }*/
+//        out.print(argumento); 
+
         
          // load CSV
         
@@ -201,6 +198,135 @@
          //response.sendRedirect("http://localhost:8080/GraphicMinning/");                   
          
 %>
-<jsp:forward page="wekaInterface.jsp">
-    <jsp:param name="param2" value="prueba"/>
-</jsp:forward>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="css/style.css" type="text/css"><link>
+        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"><link>
+        <title>Graphic Minning</title>
+    </head>
+    <body>
+           <section class="content">
+            <div class="container-fluid">
+                    <div class="col-lg-12 r1" id="r1">
+                        <h1>Bienvenido a GraphicMinning</h1>
+                    </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-10">                   
+                    <div class="col-lg-12 pform">                        
+                        <div class="col-lg-4">
+                            <!--Lo real mente importante es en el formulario decir -->
+                            <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->
+                            <p>                                
+                                El archivo que elegiste es: <%=nombrearchivo[0] %>
+                            </p>                          
+                        </div>
+                        <div class="col-lg-8">                            
+                            <form>
+                                <label class="col-lg-3" for="metodo2">Atributos</label>
+                                <div class="col-lg-9"> 
+                     
+                                    <!--<selectOneListbox value="opcion" id="atributo" class="form-control">
+                                        <selectItem itemValue="opcion" itemLabel="bla"/>
+                                        <selectItem itemValue="opcion1" itemLabel="Opcion1"/>
+                                        <selectItem itemValue="opcion2" itemLabel="Opcion2"/>
+                                        <selectItem itemValue="opcion3" itemLabel="Opcion3"/>                                                                      
+                                    </selectOneListbox>-->
+                                </div>
+                            </form>
+                        </div>                                            
+                    </div>    
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-5 pform">
+                        <div class="col-lg-12">
+                            <label>Selected Atribute</label>
+                            <form>
+                                <div class="col-lg-12">                                
+                                    <div class="col-lg-6">
+                                        <label>Nombre</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                               
+                                    <div class="col-lg-6">
+                                        <label>Tipo</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-12">
+
+                                    <div class="col-lg-6">
+                                        <label>Missing</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                                
+                                    <div class="col-lg-6">
+                                        <label>Distinct</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                                                    
+                                </div>
+                                <div class="col-lg-12">                                
+                                    <div class="col-lg-6">
+                                        <label>Unique</label>
+                                        <!--<inputText class="form-control" value=""/>-->                                
+                                    </div>           
+                                </div>
+                            </form>
+                           
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                      <tr>
+                                          <td><strong>Etiqueta</strong></td>
+                                          <td><strong>Repeticiones</strong></td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                            </div>
+                            
+                        </div>                        
+                    </div>
+                    
+                    <div class="col-lg-5 pform2">
+                        <div class="col-lg-12">
+                            <form>
+                                <label class="col-lg-3" for="metodo2">Elige proceso</label>
+                                <div class="col-lg-9"> 
+                                    <select name="metodo2" class="form-control">
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-12">
+                            <?php foreach ($datos_actuales as $datos_actualess) {
+                              # code...
+                            } ?>
+                            <h1 align="center">Gr谩fica de proceso 2 <?php echo $datos_actualess  ['periodo'] ?></h1>
+                            <div id="canvas-holder" align="center">
+                                <canvas id="actuales" width="300" height="300"></canvas>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1"></div>
+            </div>
+        </section>
+    </body>
+        
+</html>

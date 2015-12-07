@@ -26,7 +26,8 @@
                             <!--Lo real mente importante es en el formulario decir -->
                             <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->
                             <p>
-                                El archivo que elegiste es:
+                                <% String archivo= new String(request.getParameter("archivo"));   %>
+                                El archivo que elegiste es: <%=archivo %>
                             </p>                          
                         </div>
                         <div class="col-lg-8">                            
