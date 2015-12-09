@@ -29,6 +29,10 @@
 <%@ page import="weka.core.Instances" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.io.File.*" %>
+<%@ page import ="java.util.ArrayList" %>
+<%@ page import ="java.util.Arrays" %>
+<%@ page import ="java.util.List" %>
+<%@page import="clases.DBConexion"%>
 
 <%
         /*FileItemFactory es una interfaz para crear FileItem*/
@@ -46,9 +50,11 @@
             /*item.isFormField() false=input file; true=text field*/
             if (! item.isFormField()){
                 /*cual sera la ruta al archivo en el servidor*/
+                String subir="C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/subidos/"+item.getName();
                 
-                File archivo_server = new File("C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/subidos/"+item.getName());
-                /*y lo escribimos en el servido*/                
+                File archivo_server = new File(subir);
+                /*y lo escribimos en el servido*/  
+                 
                 item.write(archivo_server);
                 nombre = item.getName();
                 tipo = item.getContentType();                
@@ -81,45 +87,7 @@
             aux+=s;            
         }                   
         //Se asigna la cadena al analizador
-        Matcher m = r.matcher(aux);   
-        
-        /*while (m.find()) {
-                 out.print(m.group(0));
-                //Pequenio ciclo para poder ver los nombres de las columnas
-                /*String[] cab=m.group(3).split("[,]");
-                for (int ii=0;ii<cab.length;ii++){
-                          out.print("cabecera "+ cab[ii]);
-                          out.print("<br>");
-                          //csvOutput.write(cab[ii]);
-                  }                
-                //finaliza record para salto de linea
-                //csvOutput.endRecord();                            
-                out.print("<br>");                   
-                //las coincidencias con los datos son separadas por los parentesis, para que solo quede la
-                //información dentro de los parentesis
-                //out.print(m.group(5));
-                String[] cols = m.group(5).split("[()]"); 
-                //como aun quedan "," estas se ignoran yendo de par en par desde el 0 hasta n
-                for (int i=0;i<cols.length;i++){                    
-                       if(i%2==0){
-                            //Cada que lee una linea de coincidencia par la separa por comas para obtener
-                           //el valor individual
-                            String [] cols2= cols[i].split("[,]"); 
-                            int auxi=cols2.length;
-                            out.print("<br>");                            
-                            for (int ii=0;ii<auxi;ii++){
-                                out.print("Columnas "+ cols2[ii]);
-                                out.print("<br>");
-                                //csvOutput.write(cols2[ii]);
-                            };
-                            //una vez recorrida la linea de coincidencia y escrita se cierrra registro para
-                            //salto de linea
-                            //csvOutput.endRecord(); 
-                            out.print("<br>");
-                       }                       
-                }                                             
-            }*/       
-        
+        Matcher m = r.matcher(aux);                              
         //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
         String[] nombrearchivo = nombre.split(".sql");
         //out.print(nombrearchivo[0]);
@@ -174,16 +142,19 @@
             e.printStackTrace();
         }     
         
+
         
         String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
         String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";
-        String argumento =sourcepath+","+destpath;
-//        out.print(argumento); 
-
+        //String argumento =sourcepath+","+destpath;
         
-         // load CSV
+        boolean arffExists = new File(destpath).exists();           
+        if(arffExists){
+            File arffFile = new File(destpath);
+            arffFile.delete();
+        }
         
-        
+         // load CSV               
          CSVLoader loader = new CSVLoader();
          loader.setSource(new File(sourcepath));
          Instances data = loader.getDataSet();
@@ -193,19 +164,61 @@
          saver.setInstances(data);
          saver.setFile(new File(destpath));
          //saver.setDestination(new File(destpath));
-         saver.writeBatch();                              
-        
-         //response.sendRedirect("http://localhost:8080/GraphicMinning/");                   
+         saver.writeBatch();         
          
+     
+         Instances training_data = new Instances(new BufferedReader(
+                new FileReader(destpath)));
+        training_data.setClassIndex(training_data.numAttributes() - 1);  
+        //Creamos la lista de los atributos seleccionados
+        ArrayList<String> atributos = new ArrayList<String>();
+        ArrayList<String> instancias = new ArrayList<String>();
+        atributos.clear();
+        instancias.clear();
+        for(int i=0;i<training_data.numAttributes();i++){              
+            atributos.add(training_data.attribute(i).name());
+            
+        }
+        for(int i=0;i<training_data.numInstances();i++){              
+            instancias.add(training_data.instance(i).toString());
+            
+        }
+        
 %>
 <html>
+
     <head>
+        
+            <script type="text/javascript">
+        
+                function mostrar( obj ){
+                    alert("Entro "+obj);                        
+                    //var id= 
+                            document.getElementById('id').value=obj
+                            //id.value=obj;  
+                      mostrar2();
+                }                                                                        
+            </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/style.css" type="text/css"><link>
         <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"><link>
         <title>Graphic Minning</title>
     </head>
     <body>
+        <%
+            if(DBConexion.conexion()!=null)
+            {
+                %>
+                <p>La conexión se realizó de forma correcta</p>
+                <%
+            }
+            else
+            {
+                %>
+                <p>Hubo un error en la conexión</p>
+                <%
+            }
+        %>
            <section class="content">
             <div class="container-fluid">
                     <div class="col-lg-12 r1" id="r1">
@@ -217,85 +230,41 @@
                         <div class="col-lg-4">
                             <!--Lo real mente importante es en el formulario decir -->
                             <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->
-                            <p>                                
-                                El archivo que elegiste es: <%=nombrearchivo[0] %>
-                            </p>                          
+                           <h3> El archivo que elegiste es: </h3>   
+                           <h4><%=nombrearchivo[0] %></h4>
                         </div>
                         <div class="col-lg-8">                            
                             <form>
                                 <label class="col-lg-3" for="metodo2">Atributos</label>
-                                <div class="col-lg-9"> 
-                     
-                                    <!--<selectOneListbox value="opcion" id="atributo" class="form-control">
-                                        <selectItem itemValue="opcion" itemLabel="bla"/>
-                                        <selectItem itemValue="opcion1" itemLabel="Opcion1"/>
-                                        <selectItem itemValue="opcion2" itemLabel="Opcion2"/>
-                                        <selectItem itemValue="opcion3" itemLabel="Opcion3"/>                                                                      
-                                    </selectOneListbox>-->
+                                <div class="col-lg-9">                                    
+                                    <select class="form-control" name="atributo" onchange="mostrar(value);">                                        
+                                        <option value="0" selected>Seleccione</option> 
+                                        <%for(int i=0;i<atributos.size();i++){%> 
+                                        <option value="<%=(i+1)%>"><%=atributos.get(i).toString()%></option> 
+                                        <%}%>  
+                                    </select>
+                                        
                                 </div>
                             </form>
                         </div>                                            
                     </div>    
                     <div class="col-lg-1"></div>
                     <div class="col-lg-5 pform">
-                        <div class="col-lg-12">
-                            <label>Selected Atribute</label>
-                            <form>
-                                <div class="col-lg-12">                                
-                                    <div class="col-lg-6">
-                                        <label>Nombre</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                               
-                                    <div class="col-lg-6">
-                                        <label>Tipo</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>
-
-                                </div>
-                                <div class="col-lg-12">
-
-                                    <div class="col-lg-6">
-                                        <label>Missing</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                                
-                                    <div class="col-lg-6">
-                                        <label>Distinct</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                                                    
-                                </div>
-                                <div class="col-lg-12">                                
-                                    <div class="col-lg-6">
-                                        <label>Unique</label>
-                                        <!--<inputText class="form-control" value=""/>-->                                
-                                    </div>           
-                                </div>
-                            </form>
-                           
+                        <div class="col-lg-12">                                                       
                             <div class="col-lg-12">
-                                <table class="table table-hover table-striped">
+                                <table>
                                     <thead>
-                                      <tr>
-                                          <td><strong>Etiqueta</strong></td>
-                                          <td><strong>Repeticiones</strong></td>
-                                      </tr>
+                                    <th>Datos</th>
                                     </thead>
                                     <tbody>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
+                                        <%for(int i=0;i<instancias.size();i++){%> 
+                                        <tr>                                            
+                                           <td><%=instancias.get(i).toString()%></tD> 
+                                        </tr>                                            
+                                        <%}%>
                                     </tbody>
-                                  </table>
-                            </div>
-                            
+                                </table>
+                            </div>                            
                         </div>                        
                     </div>
                     
