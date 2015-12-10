@@ -161,3 +161,78 @@
             window.myPie = new Chart(ctx).Pie(datosActuales);
 
         </script> -->
+<% //Patron de coincidencias
+        //para saber que tabla es
+	String tabla="\\W{1}\\w+\\W{1}";//Insert into y nombre de la tabla
+        //Saber las cabecersas del archivo
+        String columnas = "(\\W{1}\\w+\\W+)+";
+        //Los datos en el archivo
+        String datos="(\\W{0,2}\\w+\\W{0,2})+";                        
+        //variable para analizar las coincidencias
+        Pattern r = Pattern.compile("(INSERT INTO ("+tabla+") \\W{1}("+columnas+")\\W{1} "
+                + "VALUES[(]("+datos+")([),]|[);]))");
+        //Pattern cols= Pattern.compile(columnas); 
+        //Pattern dat= Pattern.compile(datos); 
+         
+        //Se lee todo el documento y se concatena en una variable auxiliar
+        //desde ahi se pasara la cadena a anaizar
+        while((s = br.readLine()) != null){                          
+            aux+=s;            
+        }                   
+        //Se asigna la cadena al analizador
+        Matcher m = r.matcher(aux);                              
+        //se obtiene el nmbre del archivo para hacer el CSV, con un split para quitar la extensión
+        String[] nombrearchivo = nombre.split(".sql");
+        //out.print(nombrearchivo[0]);
+       //Se crea la el archivo con extensión CSV en la ruta especificada
+        String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
+        //Si esta el archivo lo sobreescribe
+        boolean alreadyExists = new File(outputFile).exists();         
+        if(alreadyExists){
+            File ficheroUsuarios = new File(outputFile);
+            ficheroUsuarios.delete();
+        }   
+        //Metodo para escribir el archivo
+        try {
+            
+            CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
+            while (m.find()) {
+                //Pequenio ciclo para poder ver los nombres de las columnas
+                String[] cab=m.group(3).split("[,]");
+                for (int ii=0;ii<cab.length;ii++){
+                          //out.print("cabecera "+ cab[ii]);
+                          //out.print("<br>");
+                          csvOutput.write(cab[ii]);
+                  }                
+                //finaliza record para salto de linea
+                csvOutput.endRecord();                            
+                out.print("<br>");                   
+                //las coincidencias con los datos son separadas por los parentesis, para que solo quede la
+                //información dentro de los parentesis
+                String[] cols = m.group(5).split("[()]"); 
+                //como aun quedan "," estas se ignoran yendo de par en par desde el 0 hasta n
+                for (int i=0;i<cols.length;i++){                    
+                       if(i%2==0){
+                            //Cada que lee una linea de coincidencia par la separa por comas para obtener
+                           //el valor individual
+                            String [] cols2= cols[i].split("[,]"); 
+                            int auxi=cols2.length;
+                            out.print("<br>");                            
+                            for (int ii=0;ii<auxi;ii++){
+                                //out.print("Columnas "+ cols2[ii]);
+                                //out.print("<br>");
+                                csvOutput.write(cols2[ii]);
+                            };
+                            //una vez recorrida la linea de coincidencia y escrita se cierrra registro para
+                            //salto de linea
+                            csvOutput.endRecord(); 
+                            out.print("<br>");
+                       }                       
+                }                                              
+            }
+            csvOutput.close();           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }  
+
+%>

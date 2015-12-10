@@ -14,10 +14,6 @@ import com.mysql.jdbc.exceptions.MySQLDataException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
-*
-* @author KevinArnold
-*/
 public class DBConexion {
     public static Connection conexion()
     {
