@@ -83,9 +83,7 @@
             String[] nombrearchivo = nombre.split(".sql");
             String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";            
         try {
-            FileWriter fw = new FileWriter(outputFile);
-            /*Class.forName("com.mysql.jdbc.Driver").newInstance();
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "root");*/
+            FileWriter fw = new FileWriter(outputFile);            
             String query = "select * from "+nombrearchivo[0];
             Statement stmt = conexion.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -105,47 +103,23 @@
                     fw.append(',');
                     fw.append(rs.getString(i));                    
                 }                             
-                fw.append('\n');
-                /*fw.append(rs.getString(1));
-                fw.append(',');                
-                fw.append(rs.getString(2));
-                fw.append(',');
-                fw.append(rs.getString(3));
-                fw.append('\n');*/
+                fw.append('\n');               
                }
             fw.flush();
             fw.close();
             conexion.close();            
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        /*String[] nombrearchivo = nombre.split(".sql");
-        String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";
-        //Si esta el archivo lo sobreescribe
-        boolean alreadyExists = new File(outputFile).exists();         
-        if(alreadyExists){
-            File ficheroUsuarios = new File(outputFile);
-            ficheroUsuarios.delete();
-        }   
-        //Metodo para escribir el archivo
-       
+        }        
+        String query = "DROP TABLE"+nombrearchivo[0];
+            Statement stmt = conexion.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
         
-
-        
-        
-        //String argumento =sourcepath+","+destpath;
-        
-        boolean arffExists = new File(destpath).exists();           
-        if(arffExists){
-            File arffFile = new File(destpath);
-            arffFile.delete();
-        }*/
-        //String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
-        String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";
-        
+        String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
+        String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";        
          // load CSV               
          CSVLoader loader = new CSVLoader();
-         loader.setSource(new File(outputFile));
+         loader.setSource(new File(sourcepath));
          Instances data = loader.getDataSet();
 
          // save ARFF
@@ -180,13 +154,13 @@
         
             <script type="text/javascript">
         
-                function mostrar( obj ){
-                    alert("Entro "+obj);                        
+                //function mostrar( obj ){
+                  //  alert("Entro "+obj);                        
                     //var id= 
-                            document.getElementById('id').value=obj
+                    //        document.getElementById('id').value=obj
                             //id.value=obj;  
-                      mostrar2();
-                }                                                                        
+                      //mostrar2();
+                //}                                                                        
             </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/style.css" type="text/css"><link>
@@ -208,7 +182,124 @@
                 <%
             }
         %>
-           
+           <section class="content">
+            <div class="container-fluid">
+                    <div class="col-lg-12 r1" id="r1">
+                        <h1>Bienvenido a GraphicMinning</h1>
+                    </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-10">                   
+                    <div class="col-lg-12 pform">                        
+                        <div class="col-lg-4">
+                            <!--Lo real mente importante es en el formulario decir -->
+                            <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->
+                            <p>
+                                <!-- % //String archivo= new String(request.getParameter("archivo"));   %>
+                                <!--El archivo que elegiste es: %=//archivo %>
+                                -->
+                            </p>                          
+                        </div>
+                        <div class="col-lg-8">                            
+                            <form>
+                                <label class="col-lg-3" for="metodo2">Atributos</label>
+                                <div class="col-lg-9">                                    
+                                    <select class="form-control" name="atributo" onchange="//mostrar(value);">                                        
+                                        <option value="0" selected>Seleccione</option> 
+                                        <%for(int i=0;i<atributos.size();i++){%> 
+                                        <option value="<%=(i+1)%>"><%=atributos.get(i).toString()%></option> 
+                                        <%}%>  
+                                    </select>
+                            </form>
+                        </div>                                            
+                    </div>    
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-5 pform">
+                        <div class="col-lg-12">
+                            <label>Selected Atribute</label>
+                            <form>
+                                <div class="col-lg-12">                                
+                                    <div class="col-lg-6">
+                                        <label>Nombre</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                               
+                                    <div class="col-lg-6">
+                                        <label>Tipo</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-12">
+
+                                    <div class="col-lg-6">
+                                        <label>Missing</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                                
+                                    <div class="col-lg-6">
+                                        <label>Distinct</label>
+                                        <!--<inputText class="form-control" value=""/>-->
+                                    </div>                                                                                    
+                                </div>
+                                <div class="col-lg-12">                                
+                                    <div class="col-lg-6">
+                                        <label>Unique</label>
+                                        <!--<inputText class="form-control" value=""/>-->                                
+                                    </div>           
+                                </div>
+                            </form>
+                           
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                      <tr>
+                                          <td><strong>Etiqueta</strong></td>
+                                          <td><strong>Repeticiones</strong></td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                      <tr>
+                                        <td>datos</td>
+                                        <td>datos</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                            </div>
+                            
+                        </div>                        
+                    </div>
+                    
+                    <div class="col-lg-5 pform2">
+                        <div class="col-lg-12">
+                            <form>
+                                <label class="col-lg-3" for="metodo2">Elige proceso</label>
+                                <div class="col-lg-9"> 
+                                    <select name="metodo2" class="form-control">
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                        <option value="">opciones</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-12">                           
+                            <h1 align="center">Gráfica de proceso 2 <?php echo $datos_actualess  ['periodo'] ?></h1>
+                            <div id="canvas-holder" align="center">
+                                <canvas id="actuales" width="300" height="300"></canvas>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1"></div>
+            </div>
+        </section>
     </body>
         
 </html>
