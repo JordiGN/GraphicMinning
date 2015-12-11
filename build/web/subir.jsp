@@ -1,3 +1,4 @@
+<%@page import="java.lang.String"%>
 <%@page import="java.sql.ResultSetMetaData"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
@@ -106,14 +107,15 @@
                 fw.append('\n');               
                }
             fw.flush();
-            fw.close();
-            conexion.close();            
+            fw.close();                   
         } catch (Exception e) {
             e.printStackTrace();
         }        
-        String query = "DROP TABLE"+nombrearchivo[0];
-            Statement stmt = conexion.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+        Statement stmt2 = conexion.createStatement();                       
+        String sql = "DROP TABLE "+nombrearchivo[0];
+        stmt2.executeUpdate(sql); 
+        conexion.close();     
+            
         
         String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
         String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";        
@@ -139,29 +141,16 @@
         atributos.clear();
         instancias.clear();
         for(int i=0;i<training_data.numAttributes();i++){              
-            atributos.add(training_data.attribute(i).name());
-            
+            atributos.add(training_data.attribute(i).name());            
         }
         for(int i=0;i<training_data.numInstances();i++){              
-            instancias.add(training_data.instance(i).toString());
-            
+            instancias.add(training_data.instance(i).toString());            
         }
         
 %>
 <html>
 
-    <head>
-        
-            <script type="text/javascript">
-        
-                //function mostrar( obj ){
-                  //  alert("Entro "+obj);                        
-                    //var id= 
-                    //        document.getElementById('id').value=obj
-                            //id.value=obj;  
-                      //mostrar2();
-                //}                                                                        
-            </script>
+    <head>                    
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/style.css" type="text/css"><link>
         <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"><link>
@@ -192,111 +181,26 @@
                     <div class="col-lg-12 pform">                        
                         <div class="col-lg-4">
                             <!--Lo real mente importante es en el formulario decir -->
-                            <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->
-                            <p>
-                                <!-- % //String archivo= new String(request.getParameter("archivo"));   %>
-                                <!--El archivo que elegiste es: %=//archivo %>
-                                -->
-                            </p>                          
+                            <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->                            
+                            <h3>El archivo que elegiste es: <%=nombrearchivo[0] %> </h3> 
+                                                     
                         </div>
                         <div class="col-lg-8">                            
-                            <form>
+                            <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                                <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
                                 <label class="col-lg-3" for="metodo2">Atributos</label>
-                                <div class="col-lg-9">                                    
-                                    <select class="form-control" name="atributo" onchange="//mostrar(value);">                                        
+                                <div class="col-lg-6">                                    
+                                    <select class="form-control" name="atributo" >                                        
                                         <option value="0" selected>Seleccione</option> 
                                         <%for(int i=0;i<atributos.size();i++){%> 
-                                        <option value="<%=(i+1)%>"><%=atributos.get(i).toString()%></option> 
+                                        <option value="<%=(i)%>"><%=atributos.get(i).toString()%></option> 
                                         <%}%>  
                                     </select>
+                                    <input type="submit" value="Procesar" class="btn btn-success"/>
+                                </div> 
                             </form>
-                        </div>                                            
-                    </div>    
-                    <div class="col-lg-1"></div>
-                    <div class="col-lg-5 pform">
-                        <div class="col-lg-12">
-                            <label>Selected Atribute</label>
-                            <form>
-                                <div class="col-lg-12">                                
-                                    <div class="col-lg-6">
-                                        <label>Nombre</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                               
-                                    <div class="col-lg-6">
-                                        <label>Tipo</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>
-
-                                </div>
-                                <div class="col-lg-12">
-
-                                    <div class="col-lg-6">
-                                        <label>Missing</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                                
-                                    <div class="col-lg-6">
-                                        <label>Distinct</label>
-                                        <!--<inputText class="form-control" value=""/>-->
-                                    </div>                                                                                    
-                                </div>
-                                <div class="col-lg-12">                                
-                                    <div class="col-lg-6">
-                                        <label>Unique</label>
-                                        <!--<inputText class="form-control" value=""/>-->                                
-                                    </div>           
-                                </div>
-                            </form>
-                           
-                            <div class="col-lg-12">
-                                <table class="table table-hover table-striped">
-                                    <thead>
-                                      <tr>
-                                          <td><strong>Etiqueta</strong></td>
-                                          <td><strong>Repeticiones</strong></td>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
-                                      <tr>
-                                        <td>datos</td>
-                                        <td>datos</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                            </div>
-                            
-                        </div>                        
-                    </div>
-                    
-                    <div class="col-lg-5 pform2">
-                        <div class="col-lg-12">
-                            <form>
-                                <label class="col-lg-3" for="metodo2">Elige proceso</label>
-                                <div class="col-lg-9"> 
-                                    <select name="metodo2" class="form-control">
-                                        <option value="">opciones</option>
-                                        <option value="">opciones</option>
-                                        <option value="">opciones</option>
-                                        <option value="">opciones</option>
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-lg-12">                           
-                            <h1 align="center">Gráfica de proceso 2 <?php echo $datos_actualess  ['periodo'] ?></h1>
-                            <div id="canvas-holder" align="center">
-                                <canvas id="actuales" width="300" height="300"></canvas>                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                                                   
+                    </div>                       
                 <div class="col-lg-1"></div>
             </div>
         </section>
