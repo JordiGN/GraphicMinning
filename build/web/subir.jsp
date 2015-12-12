@@ -1,3 +1,13 @@
+<%@page import="org.jfree.chart.plot.PlotOrientation"%>
+<%@page import="org.jfree.chart.JFreeChart"%>
+<%@page import="org.jfree.chart.ChartFactory"%>
+<%@page import="org.jfree.chart.ChartFactory"%>
+<%@page import="org.jfree.data.category.DefaultCategoryDataset"%>
+<%@page import="weka.classifiers.Evaluation"%>
+<%@page import="weka.classifiers.Evaluation"%>
+<%@page import="weka.classifiers.bayes.NaiveBayes"%>
+<%@page import="javax.swing.JFrame"%>
+<%@page import="org.jfree.chart.ChartPanel"%>
 <%@page import="java.lang.String"%>
 <%@page import="java.sql.ResultSetMetaData"%>
 <%@page import="java.sql.ResultSet"%>
@@ -40,6 +50,7 @@
 <%@page import="clases.DBConexion"%>
 
 <%
+        HttpSession sesionOk = request.getSession();
         /*FileItemFactory es una interfaz para crear FileItem*/
         FileItemFactory file_factory = new DiskFileItemFactory();
         /*ServletFileUpload esta clase convierte los input file a FileItem*/
@@ -147,10 +158,14 @@
             instancias.add(training_data.instance(i).toString());            
         }
         
+        sesionOk.removeAttribute("arff");                
+        sesionOk.setAttribute("arff",destpath);   
+        
+        
 %>
 <html>
 
-    <head>                    
+    <head>                            
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/style.css" type="text/css"><link>
         <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"><link>
@@ -171,39 +186,58 @@
                 <%
             }
         %>
-           <section class="content">
-            <div class="container-fluid">
-                    <div class="col-lg-12 r1" id="r1">
-                        <h1>Bienvenido a GraphicMinning</h1>
-                    </div>
-                <div class="col-lg-1"></div>
-                <div class="col-lg-10">                   
-                    <div class="col-lg-12 pform">                        
-                        <div class="col-lg-4">
-                            <!--Lo real mente importante es en el formulario decir -->
-                            <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->                            
-                            <h3>El archivo que elegiste es: <%=nombrearchivo[0] %> </h3> 
-                                                     
-                        </div>
-                        <div class="col-lg-8">                            
-                            <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
-                                <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
-                                <label class="col-lg-3" for="metodo2">Atributos</label>
-                                <div class="col-lg-6">                                    
-                                    <select class="form-control" name="atributo" >                                        
-                                        <option value="0" selected>Seleccione</option> 
-                                        <%for(int i=0;i<atributos.size();i++){%> 
-                                        <option value="<%=(i)%>"><%=atributos.get(i).toString()%></option> 
-                                        <%}%>  
-                                    </select>
-                                    <input type="submit" value="Procesar" class="btn btn-success"/>
-                                </div> 
-                            </form>
-                                                                   
-                    </div>                       
-                <div class="col-lg-1"></div>
-            </div>
-        </section>
-    </body>
-        
+    <section class="content">
+     <div class="container-fluid">
+             <div class="col-lg-12 r1" id="r1">
+                 <h1>Bienvenido a GraphicMinning</h1>
+             </div>
+             <div class="col-lg-12 pform">                        
+                 <div class="col-lg-4">
+                     <!--Lo real mente importante es en el formulario decir -->
+                     <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->                            
+                     <h3>El archivo que elegiste es: <%=nombrearchivo[0] %> </h3> 
+
+                 </div>
+                 <div class="col-lg-8">                            
+                     <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                         <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
+                         <h3>Atributos:</h3>
+                         <%for(int i=0;i<atributos.size();i++){%> 
+                            <label for='tipo' class="col-lg-3"><%=atributos.get(i).toString()+","+training_data.attribute(i).type()%></label>                              
+                          <%}%>                                                    
+                     </form>                                                                   
+                 </div>                                      
+             </div>
+             <div class="col-lg-12">
+                 <div class='col-lg-6'>
+                    <form action="crossValidation.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                         <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
+                         <label class="col-lg-3" for="metodo2">CrossValidation</label>
+                         <div class="col-lg-6">                                                                                                                  
+                            <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
+                         </div> 
+                     </form>       
+                 </div>
+                 <div class='col-lg-6'>
+                     <form action="crossDetail.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                         <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
+                         <label class="col-lg-3" for="metodo2">CrossDetailValidation</label>
+                         <div class="col-lg-6">                                                                                                                  
+                            <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
+                         </div> 
+                     </form>   
+                                 
+                 </div>
+                <div class='col-lg-6'>
+                    <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                         <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
+                         <label class="col-lg-3" for="metodo2">CrossValidation</label>
+                         <div class="col-lg-6">                                                                                                                  
+                            <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
+                         </div> 
+                     </form>   
+                </div>
+             </div>
+     </section>
+    </body>        
 </html>
