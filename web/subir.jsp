@@ -1,3 +1,8 @@
+<%-- 
+    Document   : unicos
+    Created on : 10-dic-2015, 23:24:56
+    Author     : KissPK
+--%>
 <%@page import="org.jfree.chart.plot.PlotOrientation"%>
 <%@page import="org.jfree.chart.JFreeChart"%>
 <%@page import="org.jfree.chart.ChartFactory"%>
@@ -75,8 +80,7 @@
                 nombre = item.getName();
                 tipo = item.getContentType();                
             }                       
-        }
-        
+        }        
         Connection conexion=null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -86,15 +90,15 @@
                     conexion=(Connection)DriverManager.getConnection(servidor, usuario, contrasenia);
             } catch (ClassNotFoundException e) {
                 System.err.println("Unable to get mysql driver: " + e);
-            } catch (SQLException e) {
-                System.err.println("Unable to connect to server: " + e);
             }
+        
             ScriptRunner runner = new ScriptRunner(conexion, false, false);
             String file = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/subidos/"+nombre;
             runner.runScript(new BufferedReader(new FileReader(file)));
             String[] nombrearchivo = nombre.split(".sql");
             String outputFile = "C:/Users/KissPK/Teconlogico/9no/Inteligencia Artificial/GraphicMinningV1/csv/"+nombrearchivo[0]+".csv";            
-        try {
+        
+         try {
             FileWriter fw = new FileWriter(outputFile);            
             String query = "select * from "+nombrearchivo[0];
             Statement stmt = conexion.createStatement();
@@ -116,17 +120,17 @@
                     fw.append(rs.getString(i));                    
                 }                             
                 fw.append('\n');               
-               }
+            }
             fw.flush();
             fw.close();                   
         } catch (Exception e) {
             e.printStackTrace();
-        }        
+        }
+        
         Statement stmt2 = conexion.createStatement();                       
         String sql = "DROP TABLE "+nombrearchivo[0];
         stmt2.executeUpdate(sql); 
-        conexion.close();     
-            
+        conexion.close();               
         
         String sourcepath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\csv\\"+nombrearchivo[0]+".csv";
         String destpath = "C:\\Users\\KissPK\\Teconlogico\\9no\\Inteligencia Artificial\\GraphicMinningV1\\arff\\"+nombrearchivo[0]+".arff";        
@@ -143,7 +147,7 @@
          saver.writeBatch();         
          
      
-         Instances training_data = new Instances(new BufferedReader(
+        Instances training_data = new Instances(new BufferedReader(
                 new FileReader(destpath)));
         training_data.setClassIndex(training_data.numAttributes() - 1);  
         //Creamos la lista de los atributos seleccionados
@@ -159,7 +163,8 @@
         }
         
         sesionOk.removeAttribute("arff");                
-        sesionOk.setAttribute("arff",destpath);   
+        sesionOk.setAttribute("arff",destpath);  
+        String tipoo;
         
         
 %>
@@ -196,15 +201,19 @@
                      <!--Lo real mente importante es en el formulario decir -->
                      <!--que van archivos con el enctype igual a MULTIPART/FORM-DATA -->                            
                      <h3>El archivo que elegiste es: <%=nombrearchivo[0] %> </h3> 
-
                  </div>
                  <div class="col-lg-8">                            
                      <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
                          <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
                          <h3>Atributos:</h3>
-                         <%for(int i=0;i<atributos.size();i++){%> 
-                            <label for='tipo' class="col-lg-3"><%=atributos.get(i).toString()+","+training_data.attribute(i).type()%></label>                              
-                          <%}%>                                                    
+                         <%for(int i=0;i<atributos.size();i++){ 
+                            if(training_data.attribute(i).type()==0){
+                                tipoo="Numeric";
+                               }else{
+                               tipoo="Nominal";
+                               } %>
+                            <label for='tipo' class="col-lg-3"><%=atributos.get(i).toString()+": "+tipoo %>                              %></label>                              
+                            <%}%>                                                    
                      </form>                                                                   
                  </div>                                      
              </div>
@@ -212,7 +221,7 @@
                  <div class='col-lg-6'>
                     <form action="crossValidation.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
                          <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
-                         <label class="col-lg-3" for="metodo2">CrossValidation</label>
+                         <label class="col-lg-3" for="metodo2">NaiveBayes classification</label>
                          <div class="col-lg-6">                                                                                                                  
                             <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
                          </div> 
@@ -221,17 +230,25 @@
                  <div class='col-lg-6'>
                      <form action="crossDetail.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
                          <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
-                         <label class="col-lg-3" for="metodo2">CrossDetailValidation</label>
+                         <label class="col-lg-3" for="metodo2">NaiveBayes Detail classification</label>
+                         <div class="col-lg-6">                                                                                                                  
+                            <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
+                         </div> 
+                     </form>                                    
+                 </div>
+                <div class='col-lg-6'>
+                    <form action="j48.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                         <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
+                         <label class="col-lg-3" for="metodo2">j48 classification</label>
                          <div class="col-lg-6">                                                                                                                  
                             <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
                          </div> 
                      </form>   
-                                 
-                 </div>
+                </div>
                 <div class='col-lg-6'>
-                    <form action="graficas.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
+                    <form action="SMO.jsp"  enctype="MULTIPART/FORM-DATA" method="GET">
                          <input type="hidden" id="arff" name="arff" value="<%=destpath%>">                                
-                         <label class="col-lg-3" for="metodo2">CrossValidation</label>
+                         <label class="col-lg-3" for="metodo2">SMO classification</label>
                          <div class="col-lg-6">                                                                                                                  
                             <input type="submit" value="Ver Gráfica" class="btn btn-success"/>
                          </div> 
