@@ -3,7 +3,7 @@ body{
 }   
 section{
     min-height: 100vh;
-    background-color: #ccffcc;
+    background-color: #FFFDFB;
 }
 #lof{
   text-align: center;
@@ -28,7 +28,7 @@ a:hover{
 #r1{
   height: 200px;
 
-  background:url('../img/graficas5.jpg')no-repeat fixed center;
+  background:url('../img/fondo.png')no-repeat fixed center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -39,7 +39,8 @@ a:hover{
 }
 .r1{
   position: absolute;  
-  
+  text-align: center;
+  vertical-align: center;
   height: auto;
   z-index: 1;
   color: white;
@@ -80,9 +81,9 @@ form button:hover {
   color: #F2E7E4;
 }
 .pform{   
-  border:1px solid #339999;
+ border:3px solid #65C4EB;
   border-radius: 10px;
-  background-color: #339999;
+  background-color: #DEFFFF;
   margin-bottom: 10px;
   
 }

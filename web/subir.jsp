@@ -194,7 +194,10 @@
     <section class="content">
      <div class="container-fluid">
              <div class="col-lg-12 r1" id="r1">
-                 <h1>Bienvenido a GraphicMinning</h1>
+                 <div class="row"></div>
+                        <div class="row"></div>
+                        <div class="row"></div>
+                        <div class="row">Bienvenido a GraphicMinning</div>
              </div>
              <div class="col-lg-12 pform">                        
                  <div class="col-lg-4">
